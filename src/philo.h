@@ -13,7 +13,7 @@
 #ifndef PHILO_H
 # define PHILO_H
 
-# include "libft.h"
+# include "../full_libft/include/libft.h"
 # include <pthread.h>
 
 typedef struct	phi_s
@@ -24,7 +24,7 @@ typedef struct	phi_s
 	int				t_to_eat;
 	int				t_to_sleep;
 	int				must_eat;
-}	phi_t
+}	phi_t ;
 
 /****		A trier		*****/
 
