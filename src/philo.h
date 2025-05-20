@@ -13,22 +13,36 @@
 #ifndef PHILO_H
 # define PHILO_H
 
-# include "../full_libft/include/libft.h"
 # include <pthread.h>
+# include <stdio.h>
+# include <stdlib.h>
+# include <unistd.h>
 
-typedef struct	phi_s
+typedef struct	phi_info_s
 {
-	pthread_mutex_t	*fork;
-	int				nb_philo;
+	int				nb_philos;
 	int				t_to_die;
 	int				t_to_eat;
 	int				t_to_sleep;
 	int				must_eat;
-}	phi_t ;
+	pthread_mutex_t *forks;
+}	phi_info_t;
+
+typedef struct phi_s
+{
+	pthread_t		thread;
+	int				id;
+	int				is_eating;
+	int				meals_eaten;
+	phi_info_t		*phi_info;
+	pthread_mutex_t	fork_l;
+	pthread_mutex_t	fork_r;
+} phi_t;
 
 /****		A trier		*****/
 
 
-
+/****		utils		*****/
+int	ft_atoi(const char *nptr);
 
 #endif
