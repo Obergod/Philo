@@ -44,6 +44,15 @@ int	ft_atoi(const char *nptr)
 	return (res * neg);
 }
 
-void	clean_exit(phi_t *phi)
+void	ft_uslepp(int time)
+{
+	int	i;
+
+	i = 0;
+	while (i < time)
+		i++;
+}
+
+void	clean_exit(t_phi *phi)
 {
 }
