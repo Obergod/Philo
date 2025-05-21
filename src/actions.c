@@ -14,6 +14,7 @@
 
 void	philo_eating(phi_t *phi)
 {
+	pthread_mutex_lock()
 
 }
 

@@ -53,6 +53,8 @@ void	ft_uslepp(int time)
 		i++;
 }
 
+
+
 void	clean_exit(t_phi *phi)
 {
 }
