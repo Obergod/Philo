@@ -44,16 +44,37 @@ int	ft_atoi(const char *nptr)
 	return (res * neg);
 }
 
-void	ft_uslepp(int time)
+unsigned long	get_good_time()
 {
-	int	i;
+	struct timeval	tv;
 
-	i = 0;
-	while (i < time)
-		i++;
+	gettimeofday(&tv, NULL);
+	return((tv.tv_sec * 1000) + (tv.tv_usec / 1000));
 }
 
+void	ft_usleep(unsigned long time)
+{
+	unsigned long	cur;
 
+	cur = get_good_time();
+	while((get_good_time() - cur) * 1000 < time)
+		usleep(50);
+}
+
+void	wait_start(bool is_sync, pthread_mutex_t *lock)
+{
+	while (1)
+	{
+		pthread_mutex_lock(lock);
+		if (is_sync == true)
+		{
+			pthread_mutex_unlock(lock);
+			return ;
+		}
+			pthread_mutex_unlock(lock);
+			ft_usleep(100);
+	}
+}
 
 void	clean_exit(t_phi *phi)
 {

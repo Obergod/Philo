@@ -65,7 +65,7 @@ t_monitor	*init_monitor(t_phi *phi)
 {
 	t_monitor	*monitor;
 
-	monitor = malloc(sizeof(monitor));
+	monitor = malloc(sizeof(t_monitor));
 	if (!monitor)
 		return (NULL);
 	monitor->is_sync = false;
@@ -76,6 +76,8 @@ t_monitor	*init_monitor(t_phi *phi)
 		return (free(monitor), NULL);
 	if (pthread_mutex_init(&monitor->print, NULL) != 0)
 		return (free(monitor), NULL);
+	if (pthread_mutex_init(&monitor->sync_lock, NULL) != 0)
+		return (free(monitor), NULL);
 	monitor->phi = phi;
 	return (monitor);
 }
@@ -84,7 +86,7 @@ int	main(int ac, char **av)
 {
 	t_info	*info;
 	t_phi		*phi;
-	t_monitor	*monitor;
+	t_monitor	*moni;
 
 	if (ac < 5)
 		return (1);
@@ -92,7 +94,11 @@ int	main(int ac, char **av)
 	if (!info)
 		return (1);
 	phi = init_phi(info);
-	monitor = init_monitor(phi);
-//	if (!phi)
-//		clean_exit()
+	if (!phi)
+		return (1);
+	moni = init_monitor(phi);
+	if (!moni)
+		return (1);
+	philo(moni);
+	return (0);
 }

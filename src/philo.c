@@ -12,9 +12,22 @@
 
 #include "philo.h"
 
+
+
 void	*routine(void *arg)
 {
-	// last_meal check death
+	t_monitor	*moni;
+	int			err;
+
+	err = 0;
+	moni = (t_monitor *)arg;
+	wait_start(moni->is_sync, &moni->sync_lock);
+	if (moni->phi->id % 2 == 0)
+		ft_usleep(50);
+	pthread_mutex_lock(&moni->print);
+	printf("print\n");
+	pthread_mutex_unlock(&moni->print);
+	return (NULL);
 }
 
 int	philo(t_monitor *moni)
@@ -25,16 +38,20 @@ int	philo(t_monitor *moni)
 	i = -1;
 	while (++i < moni->phi->info->nb_philos)
 	{
-		err = pthread_create(&moni->phi[i].thread, NULL, &routine, NULL);
-		if (err != 0)
+		if (pthread_create(&moni->phi[i].thread, NULL, &routine, moni) != 0)
 		{
 			printf("thread creation failed\n");
 			return (1);
 		}
 	}
+	pthread_mutex_lock(&moni->sync_lock);
+	moni->is_sync = true;
+	pthread_mutex_unlock(&moni->sync_lock);
 	i = -1;
 	while (++i < moni->phi->info->nb_philos)
 		pthread_join(moni->phi[i].thread, NULL);
+	pthread_mutex_destroy(&moni->sync_lock);
+	pthread_mutex_destroy(&moni->print);
 //	clean_up();
 	return (0);
 }

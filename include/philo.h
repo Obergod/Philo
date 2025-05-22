@@ -18,6 +18,7 @@
 # include <stdlib.h>
 # include <unistd.h>
 # include <stdbool.h>
+# include <sys/time.h>
 
 typedef struct	s_info
 {
@@ -48,13 +49,18 @@ typedef struct s_monitor
 	pthread_mutex_t last_meal;
 	pthread_mutex_t meals_eaten;
 	pthread_mutex_t print;
+	pthread_mutex_t sync_lock;
 	t_phi	*phi;
 }	t_monitor;
 
 /****		A trier		*****/
+int	philo(t_monitor *moni);
 
 
 /****		utils		*****/
 int	ft_atoi(const char *nptr);
+unsigned long	get_good_time();
+void	ft_usleep(unsigned long time);
+void	wait_start(bool is_sync, pthread_mutex_t *lock);
 
 #endif
