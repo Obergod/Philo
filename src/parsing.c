@@ -29,14 +29,6 @@ t_info	*init_info(char **av)
 		info->must_eat = ft_atoi(av[5]);
 	else
 		info->must_eat = 0;
-	info->forks = malloc(sizeof(pthread_mutex_t) * info->nb_philos);
-	if (!info->forks)
-		return (free(info), NULL);
-	while (++i < info->nb_philos)
-	{
-		if (pthread_mutex_init(&info->forks[i], NULL) != 0)
-			return (free(info->forks), free(info), NULL);
-	}
 	return (info);
 }
 
@@ -54,25 +46,36 @@ t_phi	*init_phi(t_info *info)
 		phi[i].id = i + 1;
 		phi[i].is_eating = 0;
 		phi[i].meals_eaten = 0;
-		phi[i].info = info;
-		phi[i].fork_l = info->forks[i];
-		phi[i].fork_r = info->forks[(i + 1) % info->nb_philos];
 	}
 	return (phi);
 }
 
-t_monitor	*init_monitor(t_phi *phi)
+t_monitor	*init_monitor(t_phi *phi, t_info *info)
 {
 	t_monitor	*monitor;
+	int			i;
 
+	i = -1;
 	monitor = malloc(sizeof(t_monitor));
 	if (!monitor)
 		return (NULL);
+	init_id()->id = 0;
+	monitor->info = info;
 	monitor->is_sync = false;
 	monitor->end_sim = false;
-	if (pthread_mutex_init(&monitor->last_meal, NULL) != 0)
+	monitor->can_display = true;
+	monitor->start_time = get_good_time();
+	monitor->forks = malloc(sizeof(pthread_mutex_t) * info->nb_philos);
+	if (!monitor->forks)
 		return (free(monitor), NULL);
-	if (pthread_mutex_init(&monitor->meals_eaten, NULL) != 0)
+	while (++i < info->nb_philos)
+	{
+		if (pthread_mutex_init(&monitor->forks[i], NULL) != 0)
+			return (free(monitor->forks), free(monitor), NULL);
+	}
+	if (pthread_mutex_init(&monitor->meals, NULL) != 0)
+		return (free(monitor), NULL);
+	if (pthread_mutex_init(&monitor->death, NULL) != 0)
 		return (free(monitor), NULL);
 	if (pthread_mutex_init(&monitor->print, NULL) != 0)
 		return (free(monitor), NULL);
@@ -96,7 +99,7 @@ int	main(int ac, char **av)
 	phi = init_phi(info);
 	if (!phi)
 		return (1);
-	moni = init_monitor(phi);
+	moni = init_monitor(phi, info);
 	if (!moni)
 		return (1);
 	philo(moni);

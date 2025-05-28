@@ -20,14 +20,18 @@
 # include <stdbool.h>
 # include <sys/time.h>
 
+typedef struct	s_id
+{
+	int	id;
+}	t_id;
+
 typedef struct	s_info
 {
-	int				nb_philos;
-	int				t_to_die;
-	int				t_to_eat;
-	int				t_to_sleep;
+	unsigned long 				nb_philos;
+	unsigned long				t_to_die;
+	unsigned long				t_to_eat;
+	unsigned long				t_to_sleep;
 	int				must_eat;
-	pthread_mutex_t *forks;
 }	t_info;
 
 typedef struct s_phi
@@ -37,30 +41,40 @@ typedef struct s_phi
 	int				is_eating;
 	int				meals_eaten;
 	int				last_meal;
-	t_info		*info;
-	pthread_mutex_t	fork_l;
-	pthread_mutex_t	fork_r;
 }	t_phi;
 
 typedef struct s_monitor
 {
-	bool	is_sync;
-	bool	end_sim;
-	pthread_mutex_t last_meal;
-	pthread_mutex_t meals_eaten;
+	pthread_mutex_t *forks;
+	bool			is_sync;
+	bool			end_sim;
+	bool			can_display;
+	unsigned long	start_time;
+	pthread_mutex_t death;
+	pthread_mutex_t meals;
 	pthread_mutex_t print;
 	pthread_mutex_t sync_lock;
-	t_phi	*phi;
+	pthread_t		monitor;
+	t_phi			*phi;
+	t_info			*info;
 }	t_monitor;
 
 /****		A trier		*****/
-int	philo(t_monitor *moni);
 
+/****		threads		*****/
+int	philo(t_monitor *moni);
+void	*monitor_thread(void *arg);
+
+/****		Actions		*****/
+void	philo_sleeping(t_monitor *moni, int id);
+void	philo_eating(t_monitor *moni, int id);
 
 /****		utils		*****/
 int	ft_atoi(const char *nptr);
 unsigned long	get_good_time();
 void	ft_usleep(unsigned long time);
 void	wait_start(bool is_sync, pthread_mutex_t *lock);
+t_id	*init_id();
+void	clean_exit(t_monitor *moni);
 
 #endif

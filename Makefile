@@ -20,7 +20,7 @@ SRCS_DIR = src/
 INCS_DIR = include/
 
 # Sources
-COMMON_SRC = parsing.c philo.c utils.c
+COMMON_SRC = parsing.c philo.c utils.c actions.c monitor.c
 COMMON_SRCS = $(addprefix $(SRCS_DIR), $(COMMON_SRC))
 OBJ_FILES = $(patsubst $(SRCS_DIR)%.c,$(OBJ_DIR)/%.o,$(COMMON_SRCS))
 DEP_FILES = $(OBJ_FILES:.o=.d)

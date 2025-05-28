@@ -76,6 +76,27 @@ void	wait_start(bool is_sync, pthread_mutex_t *lock)
 	}
 }
 
-void	clean_exit(t_phi *phi)
+t_id	*init_id()
 {
+	static t_id	*id;
+
+	if (!id)
+	{
+		id = malloc(sizeof(t_id));
+		if (!id)
+			return (NULL);
+	}
+	return (id);
+}
+
+void	clean_exit(t_monitor *moni)
+{
+	pthread_mutex_destroy(&moni->death);
+	pthread_mutex_destroy(&moni->meals);
+	pthread_mutex_destroy(&moni->print);
+	pthread_mutex_destroy(&moni->sync_lock);
+	pthread_mutex_destroy(moni->forks);
+	free(moni->info);
+	free(moni->phi);
+	free(moni);
 }

@@ -12,46 +12,65 @@
 
 #include "philo.h"
 
-
-
 void	*routine(void *arg)
 {
 	t_monitor	*moni;
-	int			err;
+	int			id;
 
-	err = 0;
 	moni = (t_monitor *)arg;
-	wait_start(moni->is_sync, &moni->sync_lock);
-	if (moni->phi->id % 2 == 0)
-		ft_usleep(50);
-	pthread_mutex_lock(&moni->print);
-	printf("print\n");
-	pthread_mutex_unlock(&moni->print);
+	pthread_mutex_lock(&moni->sync_lock);
+	id = init_id()->id;
+	pthread_mutex_unlock(&moni->sync_lock);
+	while (moni->end_sim != true)
+	{
+		if (id % 2 == 0)
+			ft_usleep(50);
+		philo_eating(moni, id);
+		philo_sleeping(moni, id);
+	}
 	return (NULL);
 }
 
-int	philo(t_monitor *moni)
+int	init_threads(t_monitor *moni)
 {
 	int	i;
-	int	err;
 
 	i = -1;
-	while (++i < moni->phi->info->nb_philos)
+	pthread_mutex_lock(&moni->sync_lock);
+	pthread_create(&moni->monitor, NULL, &monitor_thread, moni);
+	if (pthread_create(&moni->phi[i].thread, NULL, &routine, moni) != 0)
 	{
+		printf("thread creation failed\n");
+		return (1);
+	}
+	pthread_mutex_unlock(&moni->sync_lock);
+	while (++i < moni->info->nb_philos)
+	{
+		ft_usleep(100);
+		pthread_mutex_lock(&moni->sync_lock);
+		init_id()->id = i + 1;
 		if (pthread_create(&moni->phi[i].thread, NULL, &routine, moni) != 0)
 		{
 			printf("thread creation failed\n");
 			return (1);
 		}
+		pthread_mutex_unlock(&moni->sync_lock);
 	}
-	pthread_mutex_lock(&moni->sync_lock);
-	moni->is_sync = true;
-	pthread_mutex_unlock(&moni->sync_lock);
+	return (0);
+}
+
+int	philo(t_monitor *moni)
+{
+	int	i;
+
 	i = -1;
-	while (++i < moni->phi->info->nb_philos)
+	if (init_threads(moni) != 0)
+		return (1);
+	ft_usleep(1000);
+	while (++i < moni->info->nb_philos)
 		pthread_join(moni->phi[i].thread, NULL);
-	pthread_mutex_destroy(&moni->sync_lock);
-	pthread_mutex_destroy(&moni->print);
+	pthread_join(moni->monitor, NULL);
+	clean_exit(moni);
 //	clean_up();
 	return (0);
 }
