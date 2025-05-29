@@ -40,7 +40,7 @@ typedef struct s_phi
 	int				id;
 	int				is_eating;
 	int				meals_eaten;
-	int				last_meal;
+	unsigned long	last_meal;
 }	t_phi;
 
 typedef struct s_monitor
@@ -54,6 +54,7 @@ typedef struct s_monitor
 	pthread_mutex_t meals;
 	pthread_mutex_t print;
 	pthread_mutex_t sync_lock;
+	pthread_mutex_t end_lock;
 	pthread_t		monitor;
 	t_phi			*phi;
 	t_info			*info;
@@ -68,6 +69,8 @@ void	*monitor_thread(void *arg);
 /****		Actions		*****/
 void	philo_sleeping(t_monitor *moni, int id);
 void	philo_eating(t_monitor *moni, int id);
+void	philo_thinking(t_monitor *moni, int id);
+void	display(t_monitor *moni, int id, char *str);
 
 /****		utils		*****/
 int	ft_atoi(const char *nptr);

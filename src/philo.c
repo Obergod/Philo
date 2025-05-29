@@ -21,12 +21,20 @@ void	*routine(void *arg)
 	pthread_mutex_lock(&moni->sync_lock);
 	id = init_id()->id;
 	pthread_mutex_unlock(&moni->sync_lock);
-	while (moni->end_sim != true)
+	if (id % 2 == 0)
+		ft_usleep(50);
+	while (1)
 	{
-		if (id % 2 == 0)
-			ft_usleep(50);
+		pthread_mutex_lock(&moni->end_lock);
+		if (moni->end_sim == true)
+		{
+			pthread_mutex_unlock(&moni->end_lock);
+			break ;
+		}
+		pthread_mutex_unlock(&moni->end_lock);
 		philo_eating(moni, id);
 		philo_sleeping(moni, id);
+		philo_thinking(moni, id);
 	}
 	return (NULL);
 }
@@ -37,8 +45,7 @@ int	init_threads(t_monitor *moni)
 
 	i = -1;
 	pthread_mutex_lock(&moni->sync_lock);
-	pthread_create(&moni->monitor, NULL, &monitor_thread, moni);
-	if (pthread_create(&moni->phi[i].thread, NULL, &routine, moni) != 0)
+	if (pthread_create(&moni->monitor, NULL, &monitor_thread, moni) != 0)
 	{
 		printf("thread creation failed\n");
 		return (1);

@@ -46,6 +46,7 @@ t_phi	*init_phi(t_info *info)
 		phi[i].id = i + 1;
 		phi[i].is_eating = 0;
 		phi[i].meals_eaten = 0;
+		phi[i].last_meal = 0;
 	}
 	return (phi);
 }
@@ -80,6 +81,8 @@ t_monitor	*init_monitor(t_phi *phi, t_info *info)
 	if (pthread_mutex_init(&monitor->print, NULL) != 0)
 		return (free(monitor), NULL);
 	if (pthread_mutex_init(&monitor->sync_lock, NULL) != 0)
+		return (free(monitor), NULL);
+	if (pthread_mutex_init(&monitor->end_lock, NULL) != 0)
 		return (free(monitor), NULL);
 	monitor->phi = phi;
 	return (monitor);

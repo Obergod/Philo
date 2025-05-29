@@ -19,8 +19,10 @@ void	display(t_monitor *moni, int id, char *str)
 	pthread_mutex_lock(&moni->sync_lock);
 	time = get_good_time() - moni->start_time;
 	pthread_mutex_lock(&moni->print);
-	if (moni->can_display == true)
+	pthread_mutex_lock(&moni->end_lock);
+	if (moni->end_sim != true)
 		printf("%lu %d %s", time, id, str);
+	pthread_mutex_unlock(&moni->end_lock);
 	pthread_mutex_unlock(&moni->print);
 	pthread_mutex_unlock(&moni->sync_lock);
 }
@@ -75,23 +77,46 @@ void	leave_fork(t_monitor *moni, int id)
 
 void	philo_eating(t_monitor *moni, int id)
 {
+	pthread_mutex_lock(&moni->end_lock);
+	if (moni->end_sim == true)
+	{
+		pthread_mutex_unlock(&moni->end_lock);
+		return ;
+	}
+	pthread_mutex_unlock(&moni->end_lock);
 	take_fork(moni, id);
 	display(moni, id, "is eating\n");
 	pthread_mutex_lock(&moni->meals);
 	moni->phi[id - 1].meals_eaten += 1;
-	moni->phi[id - 1].last_meal = get_good_time() - moni->start_time;
+	moni->phi[id - 1].last_meal = get_good_time();
 	pthread_mutex_unlock(&moni->meals);
 	ft_usleep(moni->info->t_to_eat * 1000);
 	leave_fork(moni, id);
 }
 
-void	philo_thinking()
+void	philo_thinking(t_monitor *moni, int id)
 {
-
+	pthread_mutex_lock(&moni->end_lock);
+	if (moni->end_sim == true)
+	{
+		pthread_mutex_unlock(&moni->end_lock);
+		return ;
+	}
+	pthread_mutex_unlock(&moni->end_lock);
+	display(moni, id, "is thinking\n");
+	if (moni->info->t_to_eat >= moni->info->t_to_sleep)
+		ft_usleep((moni->info->t_to_eat - moni->info->t_to_sleep - 1) * 1000);
 }
 
 void	philo_sleeping(t_monitor *moni, int id)
 {
+	pthread_mutex_lock(&moni->end_lock);
+	if (moni->end_sim == true)
+	{
+		pthread_mutex_unlock(&moni->end_lock);
+		return ;
+	}
+	pthread_mutex_unlock(&moni->end_lock);
 	display(moni, id, "is sleeping\n");
 	ft_usleep(moni->info->t_to_sleep * 1000);
 }
