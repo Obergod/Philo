@@ -12,9 +12,9 @@
 
 #include "philo.h"
 
-int	xXx_terminator_xXx(t_monitor *moni)
+int	xxx_terminator_xxx(t_monitor *moni)
 {
-	int	i;
+	int				i;
 	long unsigned	time;
 
 	i = -1;
@@ -51,11 +51,11 @@ int	all_eaten(t_monitor *moni)
 	while (++i < moni->info->nb_philos)
 	{
 		pthread_mutex_lock(&moni->meals);
-			if (moni->phi[i].meals_eaten < moni->info->must_eat)
-			{
-				pthread_mutex_unlock(&moni->meals);
-				return (0);
-			}
+		if (moni->phi[i].meals_eaten < moni->info->must_eat)
+		{
+			pthread_mutex_unlock(&moni->meals);
+			return (0);
+		}
 		pthread_mutex_unlock(&moni->meals);
 	}
 	pthread_mutex_lock(&moni->death);
@@ -72,7 +72,7 @@ int	moni_loop(t_monitor *moni, int id)
 		pthread_mutex_unlock(&moni->death);
 		if (all_eaten(moni) == 1)
 			return (1);
-		else if (xXx_terminator_xXx(moni) == 1)
+		else if (xxx_terminator_xxx(moni) == 1)
 			return (1);
 		ft_usleep(50);
 		return (0);
@@ -94,4 +94,3 @@ void	*monitor_thread(void *arg)
 		;
 	return (NULL);
 }
-

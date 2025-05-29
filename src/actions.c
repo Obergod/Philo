@@ -12,21 +12,6 @@
 
 #include "philo.h"
 
-void	display(t_monitor *moni, int id, char *str)
-{
-	unsigned long	time;
-
-	pthread_mutex_lock(&moni->sync_lock);
-	time = get_good_time() - moni->start_time;
-	pthread_mutex_lock(&moni->print);
-	pthread_mutex_lock(&moni->end_lock);
-	if (moni->end_sim != true)
-		printf("%lu %d %s", time, id, str);
-	pthread_mutex_unlock(&moni->end_lock);
-	pthread_mutex_unlock(&moni->print);
-	pthread_mutex_unlock(&moni->sync_lock);
-}
-
 void	take_fork(t_monitor *moni, int id)
 {
 	int	left;
@@ -34,9 +19,9 @@ void	take_fork(t_monitor *moni, int id)
 
 	right = id - 1;
 	if (id == 1)
-		left = moni->info->nb_philos -1;
+		left = moni->info->nb_philos - 1;
 	else
-		left= right - 1;
+		left = right - 1;
 	if (id % 2 == 0)
 	{
 		pthread_mutex_lock(&moni->forks[left]);
@@ -60,9 +45,9 @@ void	leave_fork(t_monitor *moni, int id)
 
 	right = id - 1;
 	if (id == 1)
-		left = moni->info->nb_philos -1;
+		left = moni->info->nb_philos - 1;
 	else
-		left= right - 1;
+		left = right - 1;
 	if (id % 2 == 0)
 	{
 		pthread_mutex_unlock(&moni->forks[right]);

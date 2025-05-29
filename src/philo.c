@@ -12,6 +12,21 @@
 
 #include "philo.h"
 
+void	display(t_monitor *moni, int id, char *str)
+{
+	unsigned long	time;
+
+	pthread_mutex_lock(&moni->sync_lock);
+	time = get_good_time() - moni->start_time;
+	pthread_mutex_lock(&moni->print);
+	pthread_mutex_lock(&moni->end_lock);
+	if (moni->end_sim != true)
+		printf("%lu %d %s", time, id, str);
+	pthread_mutex_unlock(&moni->end_lock);
+	pthread_mutex_unlock(&moni->print);
+	pthread_mutex_unlock(&moni->sync_lock);
+}
+
 void	*routine(void *arg)
 {
 	t_monitor	*moni;
@@ -77,8 +92,27 @@ int	philo(t_monitor *moni)
 	while (++i < moni->info->nb_philos)
 		pthread_join(moni->phi[i].thread, NULL);
 	pthread_join(moni->monitor, NULL);
-	clean_exit(moni);
-//	clean_up();
 	return (0);
 }
 
+int	main(int ac, char **av)
+{
+	t_info		*info;
+	t_phi		*phi;
+	t_monitor	*moni;
+
+	if (ac < 5)
+		return (1);
+	info = init_info(av);
+	if (!info)
+		return (1);
+	phi = init_phi(info);
+	if (!phi)
+		return (1);
+	moni = init_monitor(phi, info);
+	if (!moni)
+		return (1);
+	philo(moni);
+	clean_exit(moni);
+	return (0);
+}

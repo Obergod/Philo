@@ -15,7 +15,7 @@
 t_info	*init_info(char **av)
 {
 	t_info	*info;
-	int			i;
+	int		i;
 
 	i = -1;
 	info = malloc(sizeof(t_info));
@@ -51,18 +51,34 @@ t_phi	*init_phi(t_info *info)
 	return (phi);
 }
 
+int	init_mutexes(t_monitor *monitor)
+{
+	if (pthread_mutex_init(&monitor->meals, NULL) != 0)
+		return (1);
+	if (pthread_mutex_init(&monitor->death, NULL) != 0)
+		return (1);
+	if (pthread_mutex_init(&monitor->print, NULL) != 0)
+		return (1);
+	if (pthread_mutex_init(&monitor->sync_lock, NULL) != 0)
+		return (1);
+	if (pthread_mutex_init(&monitor->end_lock, NULL) != 0)
+		return (1);
+	return (0);
+}
+
 t_monitor	*init_monitor(t_phi *phi, t_info *info)
 {
 	t_monitor	*monitor;
 	int			i;
 
 	i = -1;
+	if (!init_id())
+		return (NULL);
+	init_id()->id = 0;
 	monitor = malloc(sizeof(t_monitor));
 	if (!monitor)
 		return (NULL);
-	init_id()->id = 0;
 	monitor->info = info;
-	monitor->is_sync = false;
 	monitor->end_sim = false;
 	monitor->can_display = true;
 	monitor->start_time = get_good_time();
@@ -74,37 +90,7 @@ t_monitor	*init_monitor(t_phi *phi, t_info *info)
 		if (pthread_mutex_init(&monitor->forks[i], NULL) != 0)
 			return (free(monitor->forks), free(monitor), NULL);
 	}
-	if (pthread_mutex_init(&monitor->meals, NULL) != 0)
+	if (init_mutexes(monitor) == 1)
 		return (free(monitor), NULL);
-	if (pthread_mutex_init(&monitor->death, NULL) != 0)
-		return (free(monitor), NULL);
-	if (pthread_mutex_init(&monitor->print, NULL) != 0)
-		return (free(monitor), NULL);
-	if (pthread_mutex_init(&monitor->sync_lock, NULL) != 0)
-		return (free(monitor), NULL);
-	if (pthread_mutex_init(&monitor->end_lock, NULL) != 0)
-		return (free(monitor), NULL);
-	monitor->phi = phi;
-	return (monitor);
-}
-
-int	main(int ac, char **av)
-{
-	t_info	*info;
-	t_phi		*phi;
-	t_monitor	*moni;
-
-	if (ac < 5)
-		return (1);
-	info = init_info(av);
-	if (!info)
-		return (1);
-	phi = init_phi(info);
-	if (!phi)
-		return (1);
-	moni = init_monitor(phi, info);
-	if (!moni)
-		return (1);
-	philo(moni);
-	return (0);
+	return (monitor->phi = phi, monitor);
 }

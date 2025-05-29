@@ -12,13 +12,6 @@
 
 #include "philo.h"
 
-static int	ft_isspace(const char c)
-{
-	if ((c >= 9 && c <= 13) || c == 32)
-		return (1);
-	return (0);
-}
-
 int	ft_atoi(const char *nptr)
 {
 	int	i;
@@ -28,7 +21,7 @@ int	ft_atoi(const char *nptr)
 	i = 0;
 	neg = 1;
 	res = 0;
-	while (ft_isspace(nptr[i]) == 1)
+	while ((nptr[i] >= 9 && nptr[i] <= 13) || nptr[i] == 32)
 		i++;
 	if (nptr[i] == '+' || nptr[i] == '-')
 	{
@@ -44,12 +37,12 @@ int	ft_atoi(const char *nptr)
 	return (res * neg);
 }
 
-unsigned long	get_good_time()
+unsigned long	get_good_time(void)
 {
 	struct timeval	tv;
 
 	gettimeofday(&tv, NULL);
-	return((tv.tv_sec * 1000) + (tv.tv_usec / 1000));
+	return ((tv.tv_sec * 1000) + (tv.tv_usec / 1000));
 }
 
 void	ft_usleep(unsigned long time)
@@ -57,26 +50,11 @@ void	ft_usleep(unsigned long time)
 	unsigned long	cur;
 
 	cur = get_good_time();
-	while((get_good_time() - cur) * 1000 < time)
+	while ((get_good_time() - cur) * 1000 < time)
 		usleep(50);
 }
 
-void	wait_start(bool is_sync, pthread_mutex_t *lock)
-{
-	while (1)
-	{
-		pthread_mutex_lock(lock);
-		if (is_sync == true)
-		{
-			pthread_mutex_unlock(lock);
-			return ;
-		}
-			pthread_mutex_unlock(lock);
-			ft_usleep(100);
-	}
-}
-
-t_id	*init_id()
+t_id	*init_id(void)
 {
 	static t_id	*id;
 
@@ -91,12 +69,17 @@ t_id	*init_id()
 
 void	clean_exit(t_monitor *moni)
 {
-	pthread_mutex_destroy(&moni->death);
-	pthread_mutex_destroy(&moni->meals);
-	pthread_mutex_destroy(&moni->print);
-	pthread_mutex_destroy(&moni->sync_lock);
-	pthread_mutex_destroy(moni->forks);
-	free(moni->info);
-	free(moni->phi);
-	free(moni);
+	if (moni)
+	{
+		pthread_mutex_destroy(&moni->death);
+		pthread_mutex_destroy(&moni->meals);
+		pthread_mutex_destroy(&moni->print);
+		pthread_mutex_destroy(&moni->sync_lock);
+		pthread_mutex_destroy(moni->forks);
+		free(moni->info);
+		free(moni->phi);
+		free(moni->forks);
+		free(moni);
+	}
+	free(init_id());
 }
