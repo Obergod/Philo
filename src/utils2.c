@@ -12,7 +12,7 @@
 
 #include "philo.h"
 
-static int is_digit(char c)
+static int	is_digit(char c)
 {
 	if (c >= '0' && c <= '9')
 		return (1);
@@ -35,7 +35,7 @@ int	check_args(char **av)
 	while (av[i])
 	{
 		j = 0;
-		while(av[i][j])
+		while (av[i][j])
 		{
 			if (!is_digit(av[i][j]) || av[i][0] == '0')
 			{
