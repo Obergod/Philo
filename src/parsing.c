@@ -26,7 +26,7 @@ t_info	*init_info(char **av)
 	if (av[5])
 		info->must_eat = ft_atoi(av[5]);
 	else
-		info->must_eat = 0;
+		info->must_eat = -1;
 	return (info);
 }
 

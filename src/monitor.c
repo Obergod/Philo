@@ -46,7 +46,7 @@ int	all_eaten(t_monitor *moni)
 	int	i;
 
 	i = -1;
-	if (!moni->info->must_eat)
+	if (moni->info->must_eat <= 0)
 		return (0);
 	while (++i < moni->info->nb_philos)
 	{

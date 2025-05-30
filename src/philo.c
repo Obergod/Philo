@@ -86,6 +86,13 @@ int	philo(t_monitor *moni)
 	int	i;
 
 	i = -1;
+	if (moni->info->nb_philos == 1)
+	{
+		handle_one(moni);
+		return (0);
+	}
+	if (moni->info->must_eat == 0)
+		return (1);
 	if (init_threads(moni) != 0)
 		return (1);
 	ft_usleep(1000);
@@ -102,6 +109,8 @@ int	main(int ac, char **av)
 	t_monitor	*moni;
 
 	if (ac < 5)
+		return (1);
+	if (check_args(av) == 1)
 		return (1);
 	info = init_info(av);
 	if (!info)

@@ -81,5 +81,7 @@ void				ft_usleep(unsigned long time);
 void				wait_start(bool is_sync, pthread_mutex_t *lock);
 t_id				*init_id(void);
 void				clean_exit(t_monitor *moni);
+void				handle_one(t_monitor *moni);
+int					check_args(char **av);
 
 #endif

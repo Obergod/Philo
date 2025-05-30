@@ -90,7 +90,7 @@ void	philo_thinking(t_monitor *moni, int id)
 	pthread_mutex_unlock(&moni->end_lock);
 	display(moni, id, "is thinking\n");
 	if (moni->info->t_to_eat >= moni->info->t_to_sleep)
-		ft_usleep((moni->info->t_to_eat - moni->info->t_to_sleep - 1) * 1000);
+		ft_usleep((moni->info->t_to_eat - moni->info->t_to_sleep + 1) * 1000);
 }
 
 void	philo_sleeping(t_monitor *moni, int id)
