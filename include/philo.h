@@ -27,7 +27,7 @@ typedef struct s_id
 
 typedef struct s_info
 {
-	unsigned long	nb_philos;
+	int				nb_philos;
 	unsigned long	t_to_die;
 	unsigned long	t_to_eat;
 	unsigned long	t_to_sleep;

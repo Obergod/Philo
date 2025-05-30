@@ -5,8 +5,8 @@ LIBFT = full_libft/libftfull.a
 
 # Compilation
 CC = gcc
-#WFLAGS = -Wall -Werror -Wextra
-CFLAGS += -I$(INCS_DIR) $(WFLAGS) -g3
+WFLAGS = -Wall -Werror -Wextra
+CFLAGS += -I$(INCS_DIR) $(WFLAGS)
 DEPFLAGS = -MMD -MP
 
 # Affichage

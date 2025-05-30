@@ -15,9 +15,7 @@
 t_info	*init_info(char **av)
 {
 	t_info	*info;
-	int		i;
 
-	i = -1;
 	info = malloc(sizeof(t_info));
 	if (!info)
 		return (NULL);

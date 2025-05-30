@@ -64,7 +64,7 @@ int	all_eaten(t_monitor *moni)
 	return (1);
 }
 
-int	moni_loop(t_monitor *moni, int id)
+int	moni_loop(t_monitor *moni)
 {
 	pthread_mutex_lock(&moni->death);
 	if (moni->end_sim != true)
@@ -84,13 +84,9 @@ int	moni_loop(t_monitor *moni, int id)
 void	*monitor_thread(void *arg)
 {
 	t_monitor	*moni;
-	int			id;
 
 	moni = (t_monitor *)arg;
-	pthread_mutex_lock(&moni->sync_lock);
-	id = init_id()->id;
-	pthread_mutex_unlock(&moni->sync_lock);
-	while (moni_loop(moni, id) != 1)
+	while (moni_loop(moni) != 1)
 		;
 	return (NULL);
 }
