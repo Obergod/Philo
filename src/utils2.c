@@ -37,8 +37,11 @@ int	check_args(char **av)
 		j = 0;
 		while(av[i][j])
 		{
-			if (!is_digit(av[i][j]))
+			if (!is_digit(av[i][j]) || av[i][0] == '0')
+			{
+				printf("invalid input\n");
 				return (1);
+			}
 			j++;
 		}
 		i++;
