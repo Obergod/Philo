@@ -19,6 +19,31 @@ static int	is_digit(char c)
 	return (0);
 }
 
+long	ft_atol(const char *nptr)
+{
+	long	i;
+	long	res;
+	long	neg;
+
+	i = 0;
+	neg = 1;
+	res = 0;
+	while ((nptr[i] >= 9 && nptr[i] <= 13) || nptr[i] == 32)
+		i++;
+	if (nptr[i] == '+' || nptr[i] == '-')
+	{
+		if (nptr[i] == '-')
+			neg = -neg;
+		i++;
+	}
+	while (nptr[i] >= '0' && nptr[i] <= '9')
+	{
+		res = res * 10 + (nptr[i] - '0');
+		i++;
+	}
+	return (res * neg);
+}
+
 void	handle_one(t_monitor *moni)
 {
 	display(moni, 1, "has taken a fork\n");
@@ -38,6 +63,11 @@ int	check_args(char **av)
 		while (av[i][j])
 		{
 			if (!is_digit(av[i][j]) || av[i][0] == '0')
+			{
+				printf("invalid input\n");
+				return (1);
+			}
+			else if (ft_atol(av[i]) > INT_MAX)
 			{
 				printf("invalid input\n");
 				return (1);
